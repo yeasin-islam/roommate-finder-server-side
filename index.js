@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-require('dotenv').config()
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 3000;
 app.use(cors());
@@ -18,21 +18,35 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // const database = client.db("usersdb");
+    const postsCollection = client.db("postDB").collection("posts");
+
+    app.get("/posts", async (req, res) => {
+      const result = await postsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/posts", async (req, res) => {
+      const newPost = req.body;
+      console.group(newPost);
+      const result = await postsCollection.insertOne(newPost);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
 
 app.get("/", (req, res) => {
-  res.send("This is batch11-assignment-10-server-side server");
+  res.send("This is batch11-assignment-10-server-side Running");
 });
 
 app.listen(port, () => {
