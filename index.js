@@ -28,6 +28,19 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/featured-posts", async (req, res) => {
+      try {
+        const posts = await postsCollection
+          .find({ availability: "Available" })
+          .limit(6)
+          .toArray();
+
+        res.send(posts);
+      } catch (err) {
+        console.error("Failed to fetch featured posts", err);
+        res.status(500).send({ error: "Internal Server Error" });
+      }
+    });
     app.post("/posts", async (req, res) => {
       const newPost = req.body;
       console.group(newPost);
