@@ -23,10 +23,18 @@ async function run() {
     // const database = client.db("usersdb");
     const postsCollection = client.db("postDB").collection("posts");
 
+    app.delete("/posts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await postsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/posts", async (req, res) => {
       const result = await postsCollection.find().toArray();
       res.send(result);
     });
+
     app.get("/posts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
