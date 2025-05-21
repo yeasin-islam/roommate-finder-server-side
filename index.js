@@ -34,6 +34,23 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/my-posts", async (req, res) => {
+      const userEmail = req.query.email;
+
+      if (!userEmail) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      try {
+        const myPosts = await postsCollection
+          .find({ email: userEmail })
+          .toArray();
+        res.send(myPosts);
+      } catch (error) {
+        res.status(500).json({ error: "Server Error" });
+      }
+    });
+
     app.get("/featured-posts", async (req, res) => {
       try {
         const posts = await postsCollection
