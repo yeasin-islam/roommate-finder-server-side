@@ -23,6 +23,24 @@ async function run() {
     // const database = client.db("usersdb");
     const postsCollection = client.db("postDB").collection("posts");
 
+    app.put("/posts/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      options = { upsert: true };
+      const updatedPost = req.body;
+
+      const updatedDoc = {
+        $set: updatedPost,
+      };
+
+      const result = await postsCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
     app.delete("/posts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
