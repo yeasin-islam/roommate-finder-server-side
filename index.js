@@ -18,21 +18,22 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     // const database = client.db("usersdb");
     const postsCollection = client.db("postDB").collection("posts");
+    const supportNoteCollection = client.db("postDB").collection("supportRequestData");
+    const contactDataCollection = client.db("postDB").collection("contactData");
+
 
     app.put("/posts/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       options = { upsert: true };
       const updatedPost = req.body;
-
       const updatedDoc = {
         $set: updatedPost,
       };
-
       const result = await postsCollection.updateOne(
         filter,
         updatedDoc,
@@ -40,6 +41,29 @@ async function run() {
       );
       res.send(result);
     });
+
+    app.put("/like/:id", async (req, res) => {
+      
+
+      res.send("26165");
+    });
+
+    // app.patch("/posts/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) };
+    //   options = { upsert: true };
+    //   const result = await postsCollection.deleteOne(filter);
+    //   const updatedLikeCount = result + 1;
+    //   const updatedDoc = {
+    //     $set: updatedLikeCount,
+    //   };
+    //   const updateLike = await postsCollection.updateOne(
+    //     filter,
+    //     updatedDoc,
+    //     options
+    //   );
+    //   res.send(updateLike);
+    // });
 
     app.delete("/posts/:id", async (req, res) => {
       const id = req.params.id;
@@ -94,6 +118,18 @@ async function run() {
       const newPost = req.body;
       console.group(newPost);
       const result = await postsCollection.insertOne(newPost);
+      res.send(result);
+    });
+    app.post("/support", async (req, res) => {
+      const newSupportNote = req.body;
+      console.group(newSupportNote);
+      const result = await supportNoteCollection.insertOne(newSupportNote);
+      res.send(result);
+    });
+    app.post("/contacts", async (req, res) => {
+      const newContsctData = req.body;
+      console.group(newContsctData);
+      const result = await contactDataCollection.insertOne(newContsctData);
       res.send(result);
     });
 
